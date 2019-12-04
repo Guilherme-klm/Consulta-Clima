@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+	<title>Consulta Clima</title>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous"/>
+	<link rel="stylesheet" type="text/css" href="cssAPP.css">
+    <link rel="manifest" href="manifest.json">
+    <link rel="shortcut icon" href="Icon-512.png" type="image/x-icon"/>
+
+</head>
+<body>
+
+<div id="clima">
+
+<nav class="navbar navbar-light">
+	<div class="col-1">
+		<span class="navbar-toggler-icon"></span>
+	</div>
+	<div class="col-10">
+		<form class="form-group row">
+    		<input class="form-control tamanhoInput mt-4" id="cidade" v-model="cidade">
+    		<button class="btn btn-outline-success botaoPesquisa mt-4" @click.prevent="buscaClima()"> <img class="iconePesquisa" src="android-search_icon-icons.com_50501.png" alt="icone-pesquisa"> </button>
+  		</form>
+	</div>	
+</nav>
+
+<div class="container">
+	<div class="d-flex justify-content-center">
+		<img src="cloudy.png" alt="nuvem" class="img-fluid">
+	</div>
+	<div class="d-flex justify-content-center mb-4" style="height: 25px;">
+		<dl class="fonteCor">
+			<dd> {{ climaTemporario.cid }} &nbsp; &nbsp; {{ climaTemporario.temp }} </dd>
+		</dl>
+	</div>	
+</div>
+
+
+<div class="container">
+	<div class="d-flex justify-content-center mr-4">
+	<ul class="fonteCor">
+		<fieldset class="border border-dark">
+		<legend class="text-center">Informações Gerais</legend>
+		<li class="d-block p-2 bd-highlight"> {{ climaTemporario.data_hj }} </li>
+		<li class="d-block p-2 bd-highlight"> {{ climaTemporario.pres }} </li>
+		<li class="d-block p-2 bd-highlight"> {{ climaTemporario.umi }} </li>
+		<li class="d-block p-2 bd-highlight"> {{ climaTemporario.vent_velo }} </li>
+		<li class="d-block p-2 bd-highlight"> {{ climaTemporario.vent_dire }} </li>
+		<li class="d-block p-2 bd-highlight"> {{ climaTemporario.timez }} </li>
+		</fieldset>
+	</ul>
+</div>
+</div>
+
+</div>	
+
+	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script>
+    	const app = new Vue ({
+    		el: "#clima",
+    		data: {
+                climaTemporario: {},
+    			cidade: '',
+    			temperatura: 0,
+    			pressao: 0,
+    			umidade: 0,
+    			vento_velocidade: 0,
+    			vento_direcao: 0,
+    			cidade_buscada: '',
+    			data_hoje: 0,
+    			timezone: 0
+    		},
+    		methods: {
+    			buscaClima() {
+    				const api = 'http://api.openweathermap.org/data/2.5/weather?q='+ this.cidade +'&units=metric&APPID=763c2c39d1e436ee783dff7be04f8661';
+    				axios.get(api).then((response)=>{
+    				const dados = response.data;
+
+    				this.temperatura = dados.main.temp;
+                    this.pressao = dados.main.pressure;
+                    this.umidade = dados.main.humidity;
+                    this.vento_velocidade = dados.wind.speed;
+                    this.vento_direcao = dados.wind.deg;
+                    this.cidade_buscada = dados.name;
+                    this.data_hoje = new Date(dados.dt*1000).toLocaleDateString("pt-BR");
+                    this.timezone = dados.timezone;
+                    this.cidade = '';
+                    this.climaTemporario = {
+                                "cid": this.cidade_buscada,
+                                "temp": this.temperatura + ' ºC',
+                                "pres": 'Pressão: ' + this.pressao + ' mb',
+                                "umi": 'Umidade: ' + this.umidade + '%',
+                                "vent_velo": 'Velocidade do vento: ' + this.vento_velocidade + 'Km/h',
+                                "vent_dire": 'Direção do vento: ' + this.vento_direcao + 'º',
+                                "data_hj": 'Data de Hoje: ' + this.data_hoje,
+                                "timez": 'Timezone: ' + this.timezone/3600 + ' from UTC'
+                      };
+    				}).catch(( error) =>{
+    					console.log('ERR:' + error);
+    				})
+    			}
+    		}
+    	});
+    </script>
+    <script>
+        if ('serviceWorker' in navigator) {
+          window.addEventListener('load', () => {
+           navigator.serviceWorker.register('/sw.js').then( () => {
+            console.log('Service Worker Registered')
+           })
+         })
+        } else {
+            console.log('Service Worker NOT Registered');
+        }
+    </script>
+</body>
+</html>

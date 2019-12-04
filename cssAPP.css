@@ -1,0 +1,45 @@
+body {
+	background: url(ceu-azul1.jpg) no-repeat center center fixed;
+	background-size: cover;
+}
+
+legend {
+	font-weight:bold;
+	font-size: 18px;
+  	font-family: "Segoe UI","Arial","Times New Roman";
+}
+
+fieldset {
+	box-sizing: border-box;
+	border-radius: 10px;
+	font-style: italic;
+}
+
+.botaoPesquisa {
+	width: 50px;
+	height: 38px;
+}
+
+.iconePesquisa {
+	height: 25px;
+	width: 70%;
+}
+.tamanhoInput {
+	width: 75%;
+}
+
+.redefinirImagem {
+	width: auto;
+	height: 320px;
+	position: relative;
+}
+
+.fonteCor {
+	font-weight: 600;
+}
+
+.border {
+	width: 270px;
+	height: 280px;
+	padding-left: 15px;
+}
